@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kristine's Birthday Countdown</title>
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background-color: #f0e5e5;
+    }
+
+    .birthdayimg {
+      background-image: url('https://wallpaperaccess.com/full/9199103.jpg');
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: red;
+    }
+
+    .middle {
+      text-align: center;
+      color: white;
+    }
+
+    .countdown {
+      font-size: 40px;
+      margin-top: 30px;
+      color: red;
+      text-shadow: 0 0 10px pink; /* Glowing pink border */
+    }
+
+    .loading-bar {
+      width: 100%;
+      height: 30px;
+      margin: 20px 0;
+      position: relative;
+      display: none; /* Hidden initially */
+      border-radius: 15px;
+      overflow: hidden;
+      background: #ddd;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0;
+      background: repeating-linear-gradient(
+        135deg,
+        #ff6b6b,
+        #ff6b6b 10px,
+        #ffb3b3 10px,
+        #ffb3b3 20px
+      ); /* Striped pattern */
+      border-radius: 15px;
+      animation: loadingAnimation 35s linear; /* Animation for fade */
+    }
+
+    @keyframes loadingAnimation {
+      0% {
+        background: repeating-linear-gradient(
+          135deg,
+          #ff6b6b,
+          #ff6b6b 10px,
+          #ffb3b3 10px,
+          #ffb3b3 20px
+        );
+      }
+      50% {
+        background: repeating-linear-gradient(
+          135deg,
+          #ffb3b3,
+          #ffb3b3 10px,
+          #ff6b6b 10px,
+          #ff6b6b 20px
+        );
+      }
+      100% {
+        background: repeating-linear-gradient(
+          135deg,
+          #ff6b6b,
+          #ff6b6b 10px,
+          #ffb3b3 10px,
+          #ffb3b3 20px
+        );
+      }
+    }
+
+    /* Button Styles */
+    #playMusicButton {
+      display: none; /* Initially hidden */
+      padding: 15px 30px;
+      font-size: 20px;
+      border-radius: 10px;
+      border: 2px solid pink; /* Gentle glass-like border */
+      background-color: rgba(255, 192, 203, 0.7); /* Less transparent */
+      color: white;
+      cursor: pointer;
+      position: absolute; /* Positioned absolutely */
+      bottom: 20px; /* Distance from the bottom */
+      left: 50%; /* Center horizontally */
+      transform: translateX(-50%); /* Center adjustment */
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      transition: background-color 0.3s ease;
+    }
+
+    #playMusicButton:hover {
+      background-color: rgba(255, 192, 203, 0.9); /* Light pink on hover */
+    }
+
+    /* Confetti styles */
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: red;
+      animation: confetti-fall 5s infinite ease-in-out;
+      border-radius: 50%;
+    }
+
+    .heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-color: pink;
+      clip-path: polygon(50% 0%, 0% 40%, 50% 100%, 100% 40%);
+      animation: heart-fall 7s infinite ease-in-out;
+    }
+
+    @keyframes confetti-fall {
+      0% {
+        top: -10%;
+        opacity: 1;
+      }
+      100% {
+        top: 110%;
+        opacity: 0;
+      }
+    }
+
+    @keyframes heart-fall {
+      0% {
+        top: -10%;
+        opacity: 1;
+      }
+      100% {
+        top: 110%;
+        opacity: 0;
+      }
+    }
+
+    /* Happy Birthday Text Style */
+    #amx {
+      font-size: 60px;
+      color: white;
+      text-shadow: 2px 2px red;
+    }
+
+    #happy-birthday {
+      display: none;
+      font-size: 80px;
+      color: white; /* White text */
+      text-shadow: 0 0 10px pink; /* Pink border effect */
+    }
+
+    /* Hidden YouTube iframe for sound only */
+    #music {
+      display: none;
+      width: 0;
+      height: 0;
+    }
+  </style>
+</head>
+<body>
+  
+  <div class="birthdayimg">
+    <div class="middle">
+      <h1>🌸.•♫•♬• Krispy's Birthday Countdown! •♬•♫•.🌸</h1>
+      <hr>
+      <p id="amx" class="countdown"></p>
+      <h1 id="happy-birthday">🎂HAPPY BIRTHDAY KRISTINE!!</h1>
+      <div class="loading-bar">
+        <div class="progress" id="progressBar"></div>
+      </div>
+      <button id="playMusicButton" onclick="playMusic()">Tap Here</button>
+    </div>
+  </div>
+
+  <!-- Hidden YouTube iframe for sound only -->
+  <iframe id="music" src="https://www.youtube.com/embed/OI4zhkB5Xyg?rel=0&autoplay=1" 
+    frameborder="0" allow="autoplay; encrypted-media"></iframe>
+
+  <!-- Confetti and hearts -->
+  <div class="confetti"></div>
+  <div class="heart"></div>
+
+  <script>
+    var countDownDate = new Date("September, 2024 03:10:00").getTime(); // 
+
+    var countdownfunction = setInterval(function() {
+      var now = new Date().getTime();
+      var distance = countDownDate - now;
+
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      document.getElementById("amx").innerHTML = days + "D " + hours + "H " + seconds + "S ";
+
+      if (distance < 0) {
+        clearInterval(countdownfunction);
+        document.getElementById("amx").innerHTML = "";
+        document.getElementById("happy-birthday").style.display = "block";
+
+        // Show the play music button after countdown and make it visible
+        var playMusicButton = document.getElementById("playMusicButton");
+        playMusicButton.style.display = "inline-block";
+        playMusicButton.style.opacity = 1; // Make button fully visible
+      }
+    }, 1000);
+
+    // Create confetti and heart animations
+    function createConfetti() {
+      const confetti = document.createElement("div");
+      confetti.classList.add("confetti");
+      confetti.style.left = Math.random() * window.innerWidth + "px";
+      document.body.appendChild(confetti);
+
+      setTimeout(() => confetti.remove(), 5000);
+    }
+
+    function createHeart() {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+      heart.style.left = Math.random() * window.innerWidth + "px";
+      document.body.appendChild(heart);
+
+      setTimeout(() => heart.remove(), 7000);
+    }
+
+    setInterval(createConfetti, 300);
+    setInterval(createHeart, 600);
+
+    // Function to play music when the button is clicked
+    function playMusic() {
+      var iframe = document.getElementById("music");
+      iframe.style.display = "block"; // Make the iframe visible
+      iframe.src += "&autoplay=1"; // Ensures autoplay starts when button is pressed
+      
+      // Start loading bar animation
+      document.querySelector('.loading-bar').style.display = 'flex'; // Show loading bar
+      const progressBar = document.getElementById("progressBar");
+      progressBar.style.width = '0'; // Reset width to 0
+      progressBar.style.transition = 'none'; // Disable transition
+      setTimeout(() => {
+        progressBar.style.transition = 'width 31s linear'; // Set transition timing
+        progressBar.style.width = '100%'; // Start the loading bar animation
+      }, 100);
+
+      // Redirect to YouTube link after the loading animation finishes (31 seconds)
+      setTimeout(function() {
+        window.location.href = "https://www.youtube.com/watch?v=COXkTIgj6Ek"; // Replace with your desired link
+      }, 31000);
+    }
+  </script>
+</body>
+</html>
